@@ -33,6 +33,9 @@ ENV PATH=/opt/qemu/bin:${PATH}
 
 RUN echo "source /opt/esp/idf/export.sh > /dev/null 2>&1" >> ~/.bashrc
 
+RUN . /opt/esp/python_env/idf5.1_py3.8_env/bin/activate \
+  && pip install littlefs-python
+
 ENTRYPOINT [ "/opt/esp/entrypoint.sh" ]
 
 CMD ["/bin/bash"]

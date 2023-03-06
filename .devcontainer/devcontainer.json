@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.183.0/containers/ubuntu
 {
-	"name": "ESP-IDF QEMU",
+	"name": "Wokwi Micropython ESP32",
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
@@ -9,9 +9,9 @@
 	"extensions": [
 		"ms-vscode.cpptools",
 		"espressif.esp-idf-extension",
-		"Wokwi.wokwi-vscode"
+		"Wokwi.wokwi-vscode",
+		"ms-python.python"
 	],
-	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces,type=bind",
 	/* the path of workspace folder to be opened after container is running
 	 */
 	"workspaceFolder": "/workspaces",
@@ -24,7 +24,10 @@
 		"idf.customExtraPaths": "",
 		"idf.pythonBinPath": "/opt/esp/python_env/idf5.1_py3.8_env/bin/python",
 		"idf.toolsPath": "/opt/esp",
-		"idf.gitPath": "/usr/bin/git"
+		"idf.gitPath": "/usr/bin/git",
+		"python.defaultInterpreterPath": "/opt/esp/python_env/idf5.1_py3.8_env/bin/python"
 	},
-	"runArgs": ["--privileged"]
+	"runArgs": [
+		"--privileged"
+	]
 }
