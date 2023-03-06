@@ -5,19 +5,17 @@
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
-	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-vscode.cpptools",
 		"espressif.esp-idf-extension",
 		"Wokwi.wokwi-vscode",
 		"ms-python.python"
 	],
-	/* the path of workspace folder to be opened after container is running
-	 */
-	"workspaceFolder": "/workspaces",
 	"mounts": [
 		"source=extensionCache,target=/root/.vscode-server/extensions,type=volume"
 	],
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+	"workspaceFolder": "/workspace",
 	"settings": {
 		"terminal.integrated.defaultProfile.linux": "bash",
 		"idf.espIdfPath": "/opt/esp/idf",

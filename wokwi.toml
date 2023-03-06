@@ -1,4 +1,0 @@
-[wokwi]
-version = 1
-firmware = 'output/out.bin'
-elf = ''

@@ -1,0 +1,18 @@
+// Note that this launch.json file spins up a c debugger, NOT a micropython one.
+// I think you can probably get the pdb debugger running correctly through the wokwi terminl,
+// but I'm just not gonna figure that out right now.
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Wokwi GDB",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/firmware/esp32-20220618-v1.19.1.elf",
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/opt/esp/tools/xtensa-esp-elf-gdb/12.1_20221002/xtensa-esp-elf-gdb/bin/xtensa-esp32-elf-gdb",
+            "miDebuggerServerAddress": "localhost:3333"
+        }
+    ]
+}
