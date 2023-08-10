@@ -36,7 +36,7 @@
             }
         },
         {
-            "label": "Start WokWi emulator",
+            "label": "(re)Start WokWi emulator",
             "command": "${command:wokwi-vscode.start}",
             "dependsOn": "merge_littlefs_esp32",
             "group": {

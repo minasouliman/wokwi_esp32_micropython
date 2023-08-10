@@ -21,7 +21,8 @@ def run_main():
 
   pixels = NeoPixel(Pin(15), 16)
   while True:
-    rainbow = rainbow[-1:] + rainbow[:-1]
+    step = -2
+    rainbow = rainbow[step:] + rainbow[:step]
     for i in range(16):
       pixels[i] = rainbow[i]
     pixels.write()

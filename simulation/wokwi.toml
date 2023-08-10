@@ -2,3 +2,4 @@
 version = 1
 firmware = '../build/firmware_lfs.bin'
 elf = ''
+rfc2217ServerPort = 4000
