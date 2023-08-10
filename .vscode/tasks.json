@@ -16,6 +16,9 @@
             "detail": "Create littlefs image from files in the .\\src folder",
             "type": "shell",
             "command": "${command:python.interpreterPath} tools/filesystem_generate.py",
+            "linux": {
+                "command": "python3 tools/filesystem_generate.py",
+            },
             "group": {
                 "kind": "build",
             }
