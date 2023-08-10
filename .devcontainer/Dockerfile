@@ -2,16 +2,17 @@ FROM espressif/idf
 
 ARG DEBIAN_FRONTEND=nointeractive
 
-RUN apt-get update \
-  && apt install -y -q \
-  cmake \
-  git \
-  hwdata \
-  libglib2.0-0 \
-  libnuma1 \
-  libpixman-1-0 \
-  linux-tools-virtual \
-  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y\
+    && apt upgrade -y -q \
+    && apt install -y -q \
+    cmake \
+    git \
+    hwdata \
+    libglib2.0-0 \
+    libnuma1 \
+    libpixman-1-0 \
+    linux-tools-virtual \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN update-alternatives --install /usr/local/bin/usbip usbip `ls /usr/lib/linux-tools/*/usbip | tail -n1` 20
 
@@ -25,19 +26,18 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
 RUN wget --no-verbose ${QEMU_URL} \
-  && echo "${QEMU_SHA256} *${QEMU_DIST}" | sha256sum --check --strict - \
-  && tar -xf $QEMU_DIST -C /opt \
-  && rm ${QEMU_DIST}
+    && echo "${QEMU_SHA256} *${QEMU_DIST}" | sha256sum --check --strict - \
+    && tar -xf $QEMU_DIST -C /opt \
+    && rm ${QEMU_DIST}
 
 ENV PATH=/opt/qemu/bin:${PATH}
 
 RUN echo "source /opt/esp/idf/export.sh > /dev/null 2>&1" >> ~/.bashrc
 
-RUN . /opt/esp/python_env/idf5.1_py3.8_env/bin/activate \
-  && pip install littlefs-python
 
+# LittleFS
+# pip install littlefs-python moved to postCreateCommand to avoid issues with parallel builds
 RUN echo "alias build='python /workspace/tools/filesystem_generate.py'" >> ~/.bashrc 
 
 ENTRYPOINT [ "/opt/esp/entrypoint.sh" ]
-
 CMD ["/bin/bash"]
