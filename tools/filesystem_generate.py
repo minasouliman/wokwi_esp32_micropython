@@ -1,21 +1,50 @@
-import os
 from littlefs import LittleFS
-import subprocess
+from pathlib import Path
 
-workspace_dir = '/workspace'
 
-files = os.listdir(f"{workspace_dir}/src")
+def folder_to_lfs(
+    folder: str = "./src",
+    image: str = f"./littlefs.img",
+    disk_version: int = 0x00020000,
+) -> LittleFS:
+    """
+    Create Little FS image with the contents of the folder.
 
-output_image = f"{workspace_dir}/output/littlefs.img"
+    Parameters:
+    - folder: source folder to wrap
+    - image: destination image file
+    - disk_version: LittleFS File System Version 0x00020000 needed by most micropython builds @v1.20.0
+    """
+    fs = LittleFS(
+        block_size=4096, block_count=512, prog_size=256, disk_version=disk_version
+    )
+    source_path = Path(folder)
+    print(f"Create new filesystem from {source_path}")
+    for filename in source_path.rglob("*"):
+        lfs_fname = "/" + filename.relative_to(source_path).as_posix()
+        if filename.is_file():
+            with open(filename, "rb") as src_file:
+                # use the relative path to source as the littlefs filename
+                print(f"Adding {lfs_fname}")
+                with fs.open(lfs_fname, "wb") as lfs_file:
+                    lfs_file.write(src_file.read())
+        elif filename.is_dir():
+            fs.mkdir(lfs_fname)
+    # verify
 
-lfs = LittleFS(block_size=4096, block_count=512, prog_size=256)
+    print(f"write filesystem to {image}")
+    with open(image, "wb") as fh:
+        fh.write(fs.context.buffer)
 
-for filename in files:
-    with open(f"{workspace_dir}/src/{filename}", 'rb') as src_file:
-        with  lfs.open(filename, 'wb') as lfs_file:
-            lfs_file.write(src_file.read())
 
-with open(output_image, 'wb') as fh:
-    fh.write(lfs.context.buffer)
+# location of workspace
+workspace_dir = Path(__file__).parent.parent.absolute()
+# where are artefacts compared to workspace
+firmware_bin = workspace_dir / "firmware" / "esp32-20230426-v1.20.0.bin"
 
-subprocess.run(f"esptool.py --chip esp32 merge_bin -o {workspace_dir}/output/out.bin --flash_mode dio --flash_size 4MB 0x1000 {workspace_dir}/firmware/esp32-20220618-v1.19.1.bin 0x200000 {workspace_dir}/output/littlefs.img", shell=True)
+build_pth = workspace_dir / "build"
+build_pth.mkdir(parents=True, exist_ok=True)
+littlefs_image = build_pth / "littlefs.img"
+
+# create littlefs
+folder_to_lfs(f"{workspace_dir}/src", littlefs_image)
