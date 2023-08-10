@@ -1,4 +1,4 @@
 [wokwi]
 version = 1
-firmware = '../output/out.bin'
+firmware = '../build/firmware_lfs.bin'
 elf = ''
