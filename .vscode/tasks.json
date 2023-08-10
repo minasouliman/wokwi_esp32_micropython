@@ -1,0 +1,47 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+            "firmware_bin": "${workspaceFolder}/firmware/esp32-20230426-v1.20.0.bin",
+            "littlefs_image": "${workspaceFolder}/build/littlefs.img",
+            "wokwi_bin": "${workspaceFolder}/build/firmware_lfs.bin",
+        }
+    },
+    "tasks": [
+        {
+            "label": "create_littlefs",
+            "detail": "Create littlefs image from files in the .\\src folder",
+            "type": "shell",
+            "command": "${command:python.interpreterPath} tools/filesystem_generate.py",
+            "group": {
+                "kind": "build",
+            }
+        },
+        {
+            "label": "merge_littlefs_esp32",
+            // "dependsOn": "create_littlefs",
+            "type": "shell",
+            "windows": {
+                "command": "esptool --chip esp32 merge_bin -o $env:wokwi_bin --flash_mode dio --flash_size 4MB 0x1000 $env:firmware_bin 0x200000 $env:littlefs_image",
+            },
+            "linux": {
+                "command": "esptool.py --chip esp32 merge_bin -o ${wokwi_bin} --flash_mode dio --flash_size 4MB 0x1000 ${firmware_bin} 0x200000 ${littlefs_image}",
+            },
+            "group": {
+                "kind": "build",
+            }
+        },
+        {
+            "label": "Start WokWi emulator",
+            "command": "${command:wokwi-vscode.start}",
+            "dependsOn": "merge_littlefs_esp32",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+    ]
+}
